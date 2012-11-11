@@ -1,0 +1,9 @@
+Suduko Solver
+
+This is to solve sudoko puzzles. Puzzles are currently stored in the main, although these will be passed in as arrays.
+
+Things to come:
+
+- Random generation of Suduko puzzles and level generation i.e. beginner, novice, advanced
+- Computer Vision to read puzzles from the paper etc. 
+- Feedback to user
