@@ -14,28 +14,29 @@ ORANGE   = (255, 128,   0)
 PURPLE   = (255,   0, 255)
 CYAN     = (  0, 255, 255)
 
+WINDOWHEIGHT = 580
+WINDOWWIDTH  = 500
+
 
 HIGHLIGHTCOLOUR = BLUE
-BOXCOLOUR = WHITE
+DEFAULTCOLOUR = WHITE
 INCORRECTCOLOUR = RED
 CORRECTCOLOUR = GREEN
 
 class Board:
 
-	rectGroup = []
 	change = 42
 
 	def __init__(self, screen):
 
-		rectGroup = []
-		# self.SCREEN = screen
-		SCREEN = screen
-		# screen_size = SCREEN.get_size()
-
+		self.rectGroup = []
+		self.screen = screen
+		
 		# deals with background
-		self.background = pygame.Surface(SCREEN.get_size())
+		self.background = pygame.Surface(screen.get_size())
 		self.background = self.background.convert()
 		self.background.fill ((250,250,250))
+
 
 		# Font 
 		font = pygame.font.SysFont('Subway Black', 30, bold = False, italic = False)
@@ -63,10 +64,10 @@ class Board:
 
 		for x in range(1,10):
 			for y in range(1,10):
-				
-				tempRec = Rect(rect_x + rect_change_x, rect_y + rect_change_y, change, change)
-				pygame.draw.rect(self.background, Color("white"), tempRec)			
-				rectGroup.append(tempRec)
+				rectangle = Rect(rect_x + rect_change_x, rect_y + rect_change_y, change, change )
+				tempRec = recID(rectangle, DEFAULTCOLOUR)
+				pygame.draw.rect(self.background, Color("white"), rectangle)			
+				self.rectGroup.append(tempRec)
 				rect_change_y += change
 
 				if y % 3 == 0 :
@@ -78,30 +79,30 @@ class Board:
 					rect_change_x +=2
 			#print rect_change_x
 
+		print self.rectGroup
+
 	# gets rectangle for point clicked
 	def rectangleForPoint(self, point):
-		for rectangle in rectGroup:
-			if rectangle.pointinrect(point, rectangle):
-				return rectangle
+		for rectangleID in self.rectGroup:
+			rect = rectangleID.getRectangle()
+			if rect.collidepoint(point[0],point[1]):
+				return rectangleID
 		return None
 
+	def changeCol(self, rectangle):
+		currentCol = rectangle.getColour()
+		print currentCol
+		if currentCol != HIGHLIGHTCOLOUR:
+			self.drawHighlightBox(rectangle.getRectangle(), HIGHLIGHTCOLOUR)
+			rectangle.setColour(HIGHLIGHTCOLOUR)
+  	 	elif currentCol == HIGHLIGHTCOLOUR:
+			self.drawHighlightBox(rectangle.getRectangle(), WHITE)
+			rectangle.setColour(WHITE)
+
 	# highlighting of box
-	def drawHighlightBox(self, rectangle):
-		pygame.draw.rect(SCREEN, HIGHLIGHTCOLOUR, rectangle)
+	def drawHighlightBox(self, rectangle, color):
+		pygame.draw.rect(self.background, color, rectangle)
     #	pygame.display.update()
-
-	def drawCorrectBox(self, rectangle):
-		pygame.draw.rect(SCREEN, CORRECTCOLOUR, rectangle)
-    #	pygame.display.update()
-
-	def drawInCorrectBox(self, rectangle):
-		pygame.draw.rect(SCREEN, INCORRECTCOLOUR, rectangle)
-    #	pygame.display.update()
-
-	# resets rectangle if it is wrong ....
-	def resetRectangle(self, rectangle):
-		pygame.draw.rect(SCREEN, HIGHLIGHTCOLOUR, rectangle)
-	#	pygame.display.update()
 
 	# gets board made
 	def getBackground(self):
@@ -109,7 +110,7 @@ class Board:
 
 	# takes its self as a parameter
 	def showBoard(self, SCREEN):
-		SCREEN.blit(self.background,(0,0))
+		self.screen.blit(self.background,(0,0))
 		pygame.display.flip()
 
 	def Answer(self, answer, rectangle):
@@ -122,7 +123,6 @@ class Board:
 
 	# draws board - is in its own function to handle updates
 	def drawBoard(self, board, solvedAnswers):
-
 		for answer in solvedAnswers:
 			rectGroup.get_rect(answer)
 			drawCorrectBox(rectangle)
@@ -143,11 +143,48 @@ class Board:
 		return false
 
 
+# CREATES BUTTON WHEN CALLED
+class Button:
+
+	def	__init__(self):
+	    pygame.sprite.Sprite.__init__(self)
+	
+	def loadImage():
+		pygame.loadImage("button.jpg")
+
+
+	def setCords(self , x, y):
+		self.rect.topleft = x , y
+
+
+	def pressed(self, mouse):
+		if mouse[0] < self.rect.topleft[0]:
+			return False
+		if mouse[1] < self.rect.topleft[1]:
+			return False
+		if mouse[0] > self.rect.bottomright[0]:
+			return False
+		if mouse[1] > self.rect.bottomright[1]:
+			return False
+		return True
+
+
+class startScreen:
+
+	def __init__(self, screen):
+		drawText('Suduko Solver', font, screen, 50, 50)
+		pygame.time.wait(10000)
+		screen.clear()
+
 # MAIN PROGRAMME 
 def main():
 	# Initialise screen
  	pygame.init() # calls font initialisation automatically otherwise we can use pygame.font.init()
- 	SCREEN = pygame.display.set_mode((580, 500))
+
+ 	# button = Button()
+	# button.setCords(WINDOWHEIGHT/2, WINDOWWIDTH/2)
+
+ 	SCREEN = pygame.display.set_mode((WINDOWHEIGHT, WINDOWWIDTH))
  	pygame.display.set_caption('Suduko program')
 
 	#  Displays board
@@ -162,13 +199,19 @@ def main():
   	while (running == 1):
   		mouseclicked = False
   		selected = False
-  	#	for event in pygame.event.get():
-  	#		if event.type is QUIT: #or event.key is K_ESCAPE:
-  	 #			running = 0
-  	 #		elif (event.type == MOUSEBUTTONUP and event.type == MOUSEMOTION):
-  	 #			clicked = event.pos
+  		event = pygame.event.poll()
+  		if event.type == pygame.QUIT: #or event.key == pygame.K_ESCAPE:
+  	 		running = 0
+  	 	elif event.type == pygame.MOUSEBUTTONDOWN:
+  	 		# check if in rectangle
+			point = pygame.mouse.get_pos()
+  	 		rectangle = board_inst.rectangleForPoint(point)
+  	 		if rectangle != None: 
+  	 			board_inst.changeCol(rectangle)
+  	 			# determines if we want to turn blue or white depending on current color
+  	 			
   	 #			board_inst.updateRect("selected", clicked)
-  	 #		elif event.type == MOUSEBUTTONUP:
+  	 #		elif event.type == pygame.MOUSEBUTTONUP:
   	 #			clicked = event.pos
   	 #			board_inst.updateRect("selected", clicked)
   	 #			mouseclicked = True
@@ -176,11 +219,22 @@ def main():
 
   	 	board_inst.showBoard(SCREEN)
 
-class Point:
+class recID:
 
-	def __init__(self, x = 0, y = 0):
-		self.x = x
-		self.y = y
+	def __init__(self, rectangle, colour):
+		self.rectangle = rectangle
+		self.colour = colour
+
+
+	def getRectangle(self):
+		return self.rectangle
+
+	def getColour(self):
+		return self.colour
+
+
+	def setColour(self, colour):
+		self.colour = colour
 
 if __name__ == "__main__":
 	main()
