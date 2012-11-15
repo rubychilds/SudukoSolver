@@ -20,7 +20,7 @@ def main():
         
         for event in pygame.event.get():
             
-            # determin if X was clicked, or Ctrl+W or Alt+F4 was used 
+            # determine if X was clicked, or Ctrl+W or Alt+F4 was used 
             if event.type == pygame.QUIT:
                 return
             if event.type == pygame.KEYDOWN:
@@ -65,7 +65,7 @@ def main():
         clock.tick(60)
 
 def drawLineBetween(screen, index, start, end, width, colour_mode):
-    
+
     c1 = max(0, min(255, 2 * index - 256))
     c2 = max(0, min(255, 2 * index))
     
@@ -85,6 +85,7 @@ def drawLineBetween(screen, index, start, end, width, colour_mode):
         aprogress = 1 - progress
         x = aprogress * start[0] + progress * end[0]
         y = aprogress * start[1] + progress * end[1]
+        # cannot pass floats so must convert to integer
         pygame.draw.circle(screen, color, (int(x), int(y)), width)
 
 main()
