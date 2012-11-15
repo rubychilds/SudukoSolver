@@ -129,7 +129,7 @@ class Board:
 			drawAnswer(answer, rectangle)
 
 	def updateRect(self,identification, point):
-		
+
 		if(identification is "selected"):
 			# gets rectangle that has been selected
 			rect = rectangleForPoint(point)
@@ -206,16 +206,21 @@ def main():
   	 		# check if in rectangle
 			point = pygame.mouse.get_pos()
   	 		rectangle = board_inst.rectangleForPoint(point)
-  	 		if rectangle != None: 
-  	 			board_inst.changeCol(rectangle)
-  	 			# determines if we want to turn blue or white depending on current color
-  	 			
-  	 #			board_inst.updateRect("selected", clicked)
-  	 #		elif event.type == pygame.MOUSEBUTTONUP:
-  	 #			clicked = event.pos
-  	 #			board_inst.updateRect("selected", clicked)
-  	 #			mouseclicked = True
-  	 #			pygame.event.clear()
+  	 		event_current = pygame.event.poll()
+  	 		if event_current.type == pygame.MOUSEMOTION:
+  	 			position = event.pos
+  	 			points = []
+  	 			if rectangle.getRectangle().collidepoint(position):
+               		points = points + [position]
+               		points = points[-256:]
+               		drawLineBetween(screen, index, start, end, width, BLACK):
+				while i < len(points) - 1:
+            	drawLineBetween(screen, i, points[i], points[i + 1], radius, mode)
+            	i += 1
+        
+        pygame.display.flip()
+
+
 
   	 	board_inst.showBoard(SCREEN)
 
@@ -224,7 +229,6 @@ class recID:
 	def __init__(self, rectangle, colour):
 		self.rectangle = rectangle
 		self.colour = colour
-
 
 	def getRectangle(self):
 		return self.rectangle
@@ -235,6 +239,23 @@ class recID:
 
 	def setColour(self, colour):
 		self.colour = colour
+
+def drawLineBetween(screen, index, start, end, width, BLACK):
+
+    c1 = max(0, min(255, 2 * index - 256))
+    c2 = max(0, min(255, 2 * index))
+    
+    dx = start[0] - end[0]
+    dy = start[1] - end[1]
+    iterations = max(abs(dx), abs(dy))
+    
+    for i in xrange(iterations):
+        progress = 1.0 * i / iterations
+        aprogress = 1 - progress
+        x = aprogress * start[0] + progress * end[0]
+        y = aprogress * start[1] + progress * end[1]
+        # cannot pass floats so must convert to integer
+        pygame.draw.circle(screen, BLACK, (int(x), int(y)), width)
 
 if __name__ == "__main__":
 	main()
