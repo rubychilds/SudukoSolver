@@ -31,12 +31,11 @@ class Board:
 
 		self.rectGroup = []
 		self.screen = screen
-		
+
 		# deals with background
 		self.background = pygame.Surface(screen.get_size())
 		self.background = self.background.convert()
 		self.background.fill ((250,250,250))
-
 
 		# Font 
 		font = pygame.font.SysFont('Subway Black', 30, bold = False, italic = False)
@@ -46,12 +45,12 @@ class Board:
 	  	self.background.blit(text, textpos)
 
 		#print screen_size
-		pygame.draw.rect(self.background, Color("Black"), Rect(30, 40,400,400))
+		pygame.draw.rect(self.background, Color("Black"), Rect(30, 54,400,400))
 
 		# Starting position of the rectangle
 		rect_x = 36
-		rect_y = 46
-	 
+		rect_y = 60
+
 		# Speed and direction of rectangle
 		rect_change_x = 0
 		rect_change_y = 0
@@ -64,7 +63,7 @@ class Board:
 
 		for x in range(1,10):
 			for y in range(1,10):
-				rectangle = Rect(rect_x + rect_change_x, rect_y + rect_change_y, change, change )
+				rectangle = Rect(rect_x + rect_change_x, rect_y + rect_change_y, height, width)
 				tempRec = recID(rectangle, DEFAULTCOLOUR)
 				pygame.draw.rect(self.background, Color("white"), rectangle)			
 				self.rectGroup.append(tempRec)
@@ -79,7 +78,7 @@ class Board:
 					rect_change_x +=2
 			#print rect_change_x
 
-		print self.rectGroup
+		# print self.rectGroup
 
 	# gets rectangle for point clicked
 	def rectangleForPoint(self, point):
@@ -91,7 +90,7 @@ class Board:
 
 	def changeCol(self, rectangle):
 		currentCol = rectangle.getColour()
-		print currentCol
+	#	print currentCol
 		if currentCol != HIGHLIGHTCOLOUR:
 			self.drawHighlightBox(rectangle.getRectangle(), HIGHLIGHTCOLOUR)
 			rectangle.setColour(HIGHLIGHTCOLOUR)
@@ -139,23 +138,28 @@ class Board:
 			return true
 			if(rect != None):
 				drawHighlightBox(rect)
-			
+
 		return false
 
 
 # CREATES BUTTON WHEN CALLED
-class Button:
+class Button(pygame.sprite.Sprite):
 
-	def	__init__(self):
+	def	__init__(self, screen, xy, text):
+	   
 	    pygame.sprite.Sprite.__init__(self)
-	
-	def loadImage():
-		pygame.loadImage("button.jpg")
+	    self.screen = screen
 
+	    self.xy = xy
+	    self.color = (255,255,255)
+	    self.text = text
+	    generateImage()
 
-	def setCords(self , x, y):
-		self.rect.topleft = x , y
-
+	def generateImage(self):
+        # draw text with a solid background - about as simple as we can get
+		self.image = self.font.render(self.text, True, self.color, (0,0,0))
+		self.rect = self.image.get_rect()
+		self.rect.center = self.xy
 
 	def pressed(self, mouse):
 		if mouse[0] < self.rect.topleft[0]:
@@ -172,23 +176,49 @@ class Button:
 class startScreen:
 
 	def __init__(self, screen):
-		drawText('Suduko Solver', font, screen, 50, 50)
-		pygame.time.wait(10000)
-		screen.clear()
+
+		self.background = pygame.Surface(screen.get_size())
+		self.background = self.background.convert()
+		self.background.fill ((250,250,250))
+
+
+		self.screen = screen
+		# Font 
+		font = pygame.font.SysFont('Subway Black', 70, bold = False, italic = False)
+	  	text = font.render("Suduko Solver", 100, (10, 10, 10)) # sets font type, size then rgb tuple
+	  	textpos = text.get_rect()
+	  	textpos.centerx = self.background.get_rect().centerx
+	  	textpos.centery = self.background.get_rect().centery
+	  	self.background.blit(text, textpos)
+
+		self.screen.blit(self.background,(0,0))
+		pygame.display.flip()
+
+		pygame.time.wait(5000)
+		# screen.clear()
+
+
 
 # MAIN PROGRAMME 
 def main():
 	# Initialise screen
  	pygame.init() # calls font initialisation automatically otherwise we can use pygame.font.init()
 
- 	# button = Button()
-	# button.setCords(WINDOWHEIGHT/2, WINDOWWIDTH/2)
-
+ 
+	
  	SCREEN = pygame.display.set_mode((WINDOWHEIGHT, WINDOWWIDTH))
+ 	start = startScreen(SCREEN)
+
  	pygame.display.set_caption('Suduko program')
 
 	#  Displays board
 	board_inst = Board(SCREEN)
+	# button = Button( SCREEN, 0, "Start game")
+
+
+
+
+
 	# for running of the game
 	running = 1
 	#  Initiate mouse movements
@@ -207,22 +237,23 @@ def main():
 			point = pygame.mouse.get_pos()
   	 		rectangle = board_inst.rectangleForPoint(point)
   	 		event_current = pygame.event.poll()
-  	 		if event_current.type == pygame.MOUSEMOTION:
-  	 			position = event.pos
-  	 			points = []
-  	 			if rectangle.getRectangle().collidepoint(position):
-               		points = points + [position]
-               		points = points[-256:]
-               		drawLineBetween(screen, index, start, end, width, BLACK):
-				while i < len(points) - 1:
-            	drawLineBetween(screen, i, points[i], points[i + 1], radius, mode)
-            	i += 1
+  	 		if rectangle != None:
+  	 			board_inst.changeCol(rectangle)
+
+
+  	 		# if event_current.type == pygame.MOUSEMOTION:
+  	 		#	position = event.pos
+  	 		#	points = []
+  	 		#	if rectangle.getRectangle().collidepoint(position):
+              # 		points = points + [position]
+               	#	points = points[-256:]
+               	#	drawLineBetween(screen, index, start, end, width, BLACK):
+			#	while i < len(points) - 1:
+            #	drawLineBetween(screen, i, points[i], points[i + 1], radius, mode)
+            #	i += 1
         
-        pygame.display.flip()
-
-
-
-  	 	board_inst.showBoard(SCREEN)
+		pygame.display.flip()
+		board_inst.showBoard(SCREEN)
 
 class recID:
 
@@ -235,7 +266,6 @@ class recID:
 
 	def getColour(self):
 		return self.colour
-
 
 	def setColour(self, colour):
 		self.colour = colour
