@@ -2,8 +2,7 @@ Suduko Solver
 
 This is to solve sudoko puzzles. Puzzles are currently stored in the main, although these will be passed in as arrays.
 The difference between this puzzle and others, is the ability to read an image of a sudoko puzzle, for example if it taken from a newspaper.
-The game will then be able to solve the puzzle. Further to this it will be able to generate the puzzle in accorda
-to difficulty.
+The game will then be able to solve the puzzle. Further to this it will be able to generate the puzzle in accordance to difficulty.
 
 This program uses Numpy, Scipy, Pygame and OpenCV for Python.
 
