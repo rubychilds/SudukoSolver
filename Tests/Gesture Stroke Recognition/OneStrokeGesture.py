@@ -1,5 +1,7 @@
 from math import sqrt
 
+# Class which attempts basic handwriting recognition
+
 class Path:
     def __init__(self, points=[]):
         self.lens = []

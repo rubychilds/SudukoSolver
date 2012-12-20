@@ -1,7 +1,7 @@
-# http://stackoverflow.com/questions/10196198/how-to-remove-convexity-defects-in-sudoku-square/11366549#11366549
-
 import numpy as np
 import cv2
+
+# This class deals with reading in a Suduko image and processing it to form a grid
 
 class Grid:
 

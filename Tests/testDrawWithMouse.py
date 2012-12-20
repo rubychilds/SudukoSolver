@@ -1,5 +1,7 @@
 import pygame
 
+# This is just a testing file to explore moouse motion to draw with
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))

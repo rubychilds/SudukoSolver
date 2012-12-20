@@ -1,7 +1,5 @@
 from math import sqrt
 
-
-
 class Path:
     def __init__(self, points=[]):
         self.lens = []
