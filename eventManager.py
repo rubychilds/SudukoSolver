@@ -68,7 +68,6 @@ class SelectedButton(Event):
         self.name = "Button Selected"
         self.button  = button
         
-
 class EventManager:
 
     # coordinates communication between different classes

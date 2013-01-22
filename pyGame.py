@@ -131,7 +131,7 @@ class pyGame:
     def selectRectangle(pos):
         print "clicked rectangle"
         index = 0
-        for R in self.rectangleSprites.sprites():
+        for R in self.rectangleGroup:
             if R.collidepoint(pos):
                 return R, index
             index += 1
@@ -207,6 +207,7 @@ class pyGame:
             self.clicked(pos)
         elif isinstance(event, QuitEvent):
             pygame.quit()
+        elif isinstance(event, )
         elif isinstance(event, SelectedButton):
             self.buttonSelected = event.B
 

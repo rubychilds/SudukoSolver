@@ -26,7 +26,3 @@ class KeyboardController:
                 # NUMBER ENTERED
                     if int(event.unicode) <= 9 and int(event.unicode) >= 1:
                         ev = Number(int(event.unicode))
-               
-                # if we do have an event then we pass this onto event Manager
-                if ev != None:
-                    self.evManager.post(ev)
