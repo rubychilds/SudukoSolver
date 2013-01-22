@@ -1,5 +1,5 @@
 from eventManager import *
-from newBoard import *
+from pyGame import *
 from StartScreen import *
 from Game import *
 from keyBoardManager import *
@@ -11,7 +11,7 @@ def main():
 	event_manager = EventManager()
 	game = Game(event_manager)
 	StartScreen()
-	PygameView(event_manager)
+	pyGame(event_manager)
 	input_controller = KeyboardController(event_manager)
 	spinner = CPUSpinnerController(event_manager)
 	spinner.run()

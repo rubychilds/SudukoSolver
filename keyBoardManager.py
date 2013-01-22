@@ -14,17 +14,13 @@ class KeyboardController:
 # This deals with anything which happens in event on keyboard
 # Handle input events.
     def Notify(self, event):
+
         if isinstance(event, TickEvent):
             for event in pygame.event.get():
                 ev = None
                 # QUIT GAME
                 if event.type == pygame.QUIT and event.key == pygame.K_ESCAPE:
                     ev = QuitEvent()
-
-                # MOUSE CLICK
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    point = event.pos
-                    ev = MouseClick(point)
                 
                 elif event.type == KEYDOWN:
                 # NUMBER ENTERED

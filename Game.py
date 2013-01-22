@@ -18,6 +18,7 @@ class Game:
 		self.event_manager.post(event)
 		
 	def Notify(self, event):
+		# print "NOTIFIED Game state"
 		if isinstance(event, TickEvent):
 			if self.state == Game.STATE_CONFIG:
 				self.Start()

@@ -78,7 +78,7 @@ class EventManager:
         self.listeners = WeakKeyDictionary()
 
     def RegisterListener(self, listener):
-      #  print "registering "
+        print "registering "
         self.listeners[listener] = 1
         print listener
 
@@ -87,7 +87,12 @@ class EventManager:
             del self.listeners[listener]
 
     def post(self, event):
-        print "NOTIFYING"
-       # print event.name
-        for listener in self.listeners.keys():
-            listener.Notify(event)
+
+        try:
+            for listener in self.listeners.keys():
+                if(event!= TickEvent()):
+                   # print "testing listener"
+                    listener.Notify(event)
+        except KeyError:
+            print "No Listener"
+            pass
