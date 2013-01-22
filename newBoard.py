@@ -14,7 +14,7 @@ BLACK    = (0 ,0 , 0)
 
 textButtons = ["Start Game", "Hint", "Help", "End Game"]
 
-COLORS = [WHITE, BLUE, RED, GREEN]
+COLOURS = [WHITE, BLUE, RED, GREEN]
 
 WINDOWHEIGHT = 500
 WINDOWWIDTH  = 580
@@ -65,6 +65,7 @@ class PygameView:
 
         self.ShowBoard()
         self.ShowButtons()
+        self.ShowRectangles()
 
         # self.buttons = pygame.sprite.RenderUpdates()
         # holds a single sprite
@@ -74,7 +75,6 @@ class PygameView:
     def ShowBoard(self):
         # creates rectangle
         pygame.draw.rect(self.background, BLACK,(30, 54, 400, 400),0)
-        # pygame.draw.rect(self.background, WHITE, squareRect) 
         self.screen.blit(self.background, (0,0))
         pygame.display.update()        
 
@@ -84,35 +84,33 @@ class PygameView:
         index = 0
 
         for text in textButtons:
-
             button = Button((500, 100 + index), text)
             index += 50
             self.buttons.add(button)
             self.screen.blit(button.image, button.rect)
-
         pygame.display.update() 
 
-    def ShowRectangles(self, rectangle):
+    def ShowRectangles(self):
 
         self.rectangleGroup = []
         # Starting position of the rectangle
         rect_x = 36
         rect_y = 60
 
-            # Speed and direction of rectangle
+        # Speed and direction of rectangle
         rect_change_x = 0
         rect_change_y = 0
 
-            # Width and height of rectangles
+        # Width and height of rectangles
         height = 40
         width = 40
         change = 42
 
         for x in range(1,10):
             for y in range(1,10):
-                rectangle = Rect(rect_x + rect_change_x, rect_y + rect_change_y, height, width)
-                pygame.draw.rect(self.screen, WHITE, rectangle)         
-                self.rectangleGroup.append(tempRec)
+                rectangle = Rect(rect_x + rect_change_x, rect_y + rect_change_y, height, width)         
+                recClass(rectangle, self.screen)
+                self.rectangleGroup.append(rectangle)
                 rect_change_y += change
 
                 if y % 3 == 0 :
@@ -123,11 +121,13 @@ class PygameView:
             if x % 3 == 0 :
                 rect_change_x +=2
 
-        rectangleSprite = RectangleSprite(self.rectangleSprites)
-        rectangleSprite = self.GetRectangleSprite(sector)
+        # rectangleSprite = RectangleSprite(self.rectangleSprites)
+        # rectangleSprite = self.GetRectangleSprite(sector)
+        pygame.display.update() 
 
-        # IF A RECTANGLE HAS BEEN CLICKED - RETURN IT
+    # IF A RECTANGLE HAS BEEN CLICKED - RETURN IT
     def selectRectangle(pos):
+        print "clicked rectangle"
         index = 0
         for R in self.rectangleSprites.sprites():
             if R.collidepoint(pos):
@@ -138,8 +138,9 @@ class PygameView:
         # CHECKS IF CLICKS ON BOARD
     def clickInBoard(self, pos):
         # if clicked on the board
+        print "has clicked in BOARD"
         for R in self.backRectangle.sprites():
-            # checks if rectangle us true - selected
+            # checks if rectangle is true - selected
             if R.collidepoint(pos):
                 event = SelectedRectangle(R)
                 event_manager.post(ev)
@@ -172,11 +173,9 @@ class PygameView:
         elif id is textButtons[3]:
             pass
 
-
-
-
         # IF SOMETHING HAS BEEN clicked
     def clicked(self, pos):
+        print "clicked"
         if(clickInBoard(pos) == True):
             rectagle, index = selectRectangle(pos)
             ev = SelectedRectangle(rectangle)
@@ -186,26 +185,22 @@ class PygameView:
 
         # DEALS WITH NOTIFICATIONS TO BOARD
     def Notify(self, event):
+        print "notified PYGAME"
         if isinstance(event, TickEvent):
             print ""
-            #Draw Everything
+           # Draw Everything
         #    self.backRectangle.clear( self.window, self.background)
          #   self.rectangleSprites.clear( self.window, self.background)
 
-            # updates board and rectangles
          #   self.backRectangle.update()
-          #  self.rectangleSprites.update()
 
-        #    dirtyRects1 = self.backRectangle.draw(self.window)
-        #    dirtyRects2 = self.rectangleSprites.draw(self.window)
-    
-        #    dirtyRects = dirtyRects1 + dirtyRects2
-        #    pygame.display.update(dirtyRects)
+            pygame.display.update()
 
         elif isinstance(event, BoardBuiltEvent):
             board = event.board
             self.ShowBoard(board)
         elif isinstance(event, MouseClick):
+            print "MouseClick"
             pos = event.pos
             self.clicked(pos)
         elif isinstance(event, QuitEvent):
@@ -235,15 +230,12 @@ class Board(pygame.sprite.Sprite):
         if isinstance(event, SelectedRectangle):
             self.selected = event.rectangle
             id = 0
-        
         elif isinstance(event, DeselectedRectangle):
             self.selected = event.rectangle
             id = 1
-        
         elif isinstance(event, CorrectNumber):
             self.selected = event.rectangle
             id = 2
-        
         elif isinstance(event, IncorrectNumber):
             self.selected = event.rectangle
             id = 3
@@ -261,17 +253,18 @@ class Board(pygame.sprite.Sprite):
     # RECTANGLE CLASS
 class recClass(pygame.sprite.Sprite):
 
-    def __init__(self, x_pos, y_pos):
+    def __init__(self, rectangle, screen):
         pygame.sprite.Sprite.__init__(self)
-        self.rectangle = rectangle
+
+        self.screen =screen
         self.colour = COLOURS[0]
         self.image = pygame.Surface((CELL_SIZE, CELL_SIZE))
-        self.image.fill(COLORS[self.colour])
-        self.rectangle = pygame.Rect(x_pos, y_pos, CELL_SIZE, CELL_SIZE)
+        self.image.fill(self.colour)
+        self.rectangle = rectangle
         self.freeze = False
         self.number = None
-        pygame.draw.rect(    )
-        self.rect.topleft = initial_position
+        # draws  it
+        pygame.draw.rect(self.screen, self.colour, self.rectangle)
 
     def update(self):
         self.image.fill(self.colour)
@@ -294,6 +287,6 @@ class recClass(pygame.sprite.Sprite):
     def setState(self, id):
         if(freeze != True):
             self.colour = COLOURS[id]
-            # If correct freese the cell
+            # If correct freezes the cell
             if(id == 2):
                 self.freeze = True

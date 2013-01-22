@@ -22,6 +22,7 @@ class BoardBuiltEvent(Event):
 
 class MouseClick(Event):
     def __init__(self, pos):
+        print " CLICKED EVENT"
         self.name = "Mouse Click Event"
         self.pos = pos
 
@@ -77,14 +78,16 @@ class EventManager:
         self.listeners = WeakKeyDictionary()
 
     def RegisterListener(self, listener):
-        print "registering "
+      #  print "registering "
         self.listeners[listener] = 1
+        print listener
 
     def UnregisterListener(self, listener):
         if listener in self.listeners.keys():
             del self.listeners[listener]
 
     def post(self, event):
-        print event.name
+        print "NOTIFYING"
+       # print event.name
         for listener in self.listeners.keys():
             listener.Notify(event)

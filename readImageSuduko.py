@@ -18,7 +18,7 @@ class Grid:
 
 	def preprocessing(self, im):
 
-		image = im.copy()
+		# image = im.copy()
 		# translates image to Gray scale
 		gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
 		# applies gaussian blur
@@ -38,9 +38,9 @@ class Grid:
 
 	def areaRemoval(self, image):
 
-		thresh = cv2.adaptiveThreshold(res,255,0,1,19,2)
+		thresh = cv2.adaptiveThreshold(image , 255,0,1,19,2)
 
-		contours,hierarchy = cv2.findContours(thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+		contours , hierarchy = cv2.findContours(thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 		samples =  np.empty((0,100))
 		responses = []
 
