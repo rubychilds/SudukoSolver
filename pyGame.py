@@ -4,7 +4,6 @@ from eventManager import *
 from pygame.locals import *
 from pygame import Color, Rect, Surface
 
-
 # COLOURS
 WHITE    = (255, 255, 255)
 RED      = (255,   0,   0)
@@ -43,7 +42,6 @@ class pyGame:
 
         self.evManager = evManager
         self.evManager.RegisterListener(self)
-        print "REGISTERED VIEW"
 
         pygame.init()
 
@@ -127,38 +125,25 @@ class pyGame:
         # rectangleSprite = self.GetRectangleSprite(sector)
         pygame.display.update() 
 
-    # IF A RECTANGLE HAS BEEN CLICKED - RETURN IT
-    def selectRectangle(pos):
-        print "clicked rectangle"
-        index = 0
-        for R in self.rectangleGroup:
-            if R.collidepoint(pos):
-                return R, index
-            index += 1
-        return None
-
-        # CHECKS IF CLICKS ON BOARD
-    def clickInBoard(self, pos):
+    # CHECKS IF CLICKS ON BOARD
+    def clicked(self, pos):
         # if clicked on the board
-        print "has clicked in BOARD"
-        for R in self.backRectangle.sprites():
+        for R in self.rectangleGroup:
             # checks if rectangle is true - selected
             if R.collidepoint(pos):
                 event = SelectedRectangle(R)
-                event_manager.post(ev)
-                return True
-        return False
+                self.evManager.post(event)
+                break
+        self.buttonClick(pos)
 
-        # CHECKS IF BUTTON CLICKED
+    # CHECKS IF BUTTON CLICKED
     def buttonClick(self, pos):
         buttonClicked = False
         for B in self.buttons.sprites():
-            if B.collidepoint(pos):
-                buttonClicked = True
-                id = B.text
+            if B.rect.collidepoint(pos): 
+                ev = SelectedButton(B.text)
+                self.evManager.post(ev)
                 break
-        if buttonClicked:
-            selectedButton(id)
 
     def selectedButton(self, id):
 
@@ -175,41 +160,33 @@ class pyGame:
         elif id is textButtons[3]:
             pass
 
-        # IF SOMETHING HAS BEEN clicked
-    def clicked(self, pos):
-        print "clicked"
-        if(clickInBoard(pos) == True):
-            rectagle, index = selectRectangle(pos)
-            ev = SelectedRectangle(rectangle)
-            self.rectangle = rectangle
-        else:
-            buttonClick(pos)
+    def NumberEntered(self, number):
+        print number
 
         # DEALS WITH NOTIFICATIONS TO BOARD
     def Notify(self, event):
-        print "notified PYGAME"
-       # if isinstance(event, TickEvent):
-        #    print ""
-           # Draw Everything
-        #    self.backRectangle.clear( self.window, self.background)
-         #   self.rectangleSprites.clear( self.window, self.background)
-
-         #   self.backRectangle.update()
-
-            # pygame.display.update()
+        print event.name
 
         if isinstance(event, BoardBuiltEvent):
             board = event.board
             self.ShowBoard(board)
+        elif isinstance(event, SelectedRectangle):
+
+
+                   
         elif isinstance(event, MouseClick):
             print "MouseClick"
             pos = event.pos
             self.clicked(pos)
         elif isinstance(event, QuitEvent):
             pygame.quit()
-        elif isinstance(event, )
+        elif isinstance(event, NumberEvent):
+            self.NumberEntered(event.number)
         elif isinstance(event, SelectedButton):
-            self.buttonSelected = event.B
+            selectedButton(event.button)
+
+
+
 
 #------------------------------------------------------------------------------
 class Board(pygame.sprite.Sprite):
@@ -228,7 +205,7 @@ class Board(pygame.sprite.Sprite):
         self.evManager.post(ev)
 
     def Notify(self, event):
-        
+        print "NOTIFIED GAME BOARD"
         # deals with selection of rectangles
         if isinstance(event, SelectedRectangle):
             self.selected = event.rectangle
@@ -253,7 +230,7 @@ class Board(pygame.sprite.Sprite):
                 self.selected = None
 
 #------------------------------------------------------------------------------
-    # RECTANGLE CLASS
+# RECTANGLE CLASS
 class recClass(pygame.sprite.Sprite):
 
     def __init__(self, rectangle, screen):

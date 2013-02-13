@@ -36,62 +36,45 @@ class SelectEndEvent(Event):
         self.name = "Select End Event"
         self.pos = pos
 
-class SelectedRectangle(Event):
-    def __init__(self, rectangle):
-        self.name = "Select Rectangle"
-        self.rectangle = rectangle
-
-class DeselectedRectangle(Event):
-    def __init__(self, rectangle):
-        self.name = "De-Select Rectangle"
-        self.rectangle = rectangle
-
-class CorrectNumber(Event):
-    def __init__(self, rectangle, number):
-        self.name = "CorrectNumber"
-        self.number  = number
-        self.rectangle = rectangle
-
-class IncorrectNumber(Event):
-    def __init__(self, rectangle, number):
-        self.name = "InCorrectNumber"
-        self.number  = number
-        self.rectangle = rectangle
-
-class Number(Event):
+class NumberEvent(Event):
     def __init__(self, number):
-        self.name = "InCorrectNumber"
+      #  print number
+        self.name = "Number"
         self.number  = number
 
 class SelectedButton(Event):
     def __init__(self, button):
         self.name = "Button Selected"
-        self.button  = button
+        self.button = button
         
+class SelectedRectangle(Event):
+    def __init__(self, rectangle):
+        self.name = "rectangle Selected"
+        self.rectangle= rectangle
+
+
 class EventManager:
 
     # coordinates communication between different classes
     # creates weak dictionary to listen
     def __init__(self):
         from weakref import WeakKeyDictionary
-        self.listeners = WeakKeyDictionary()
+        self.listeners = []
 
     def RegisterListener(self, listener):
-        print "registering "
-        self.listeners[listener] = 1
-        print listener
+        self.listeners.append(listener)
+
+        for listener in enumerate(self.listeners):
+            print listener
 
     def UnregisterListener(self, listener):
         if listener in self.listeners.keys():
-            del self.listeners[listener]
+            listeners.remove(listener)
 
     def post(self, event):
-
         try:
-            for listener in self.listeners.keys():
-                if(event!= TickEvent()):
-                   # print "testing listener"
-                    listener.Notify(event)
+            for pos, listener in enumerate(self.listeners):
+                listener.Notify(event)
         except KeyError:
             print "No Listener"
             pass

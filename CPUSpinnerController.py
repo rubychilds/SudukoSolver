@@ -13,7 +13,7 @@ class CPUSpinnerController:
         while self.keepGoing:
             event = TickEvent()
             self.event_manager.post(event)
-            time.sleep(0.1)
+            time.sleep(0.01)
 
     def Notify(self, event):
       #  print "CPU Has been notified"
